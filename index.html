@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websocket</title>
+</head>
+
+<body>
+    <ul>
+
+    </ul>
+    <form action="">
+        <input type="text" name="name">
+        <input type="text" name="message">
+        <input type="submit" value="Send">
+    </form>
+    <script>
+        const socket = new WebSocket('ws://localhost:4000');
+        const id = +new Date() + Math.random();
+
+        document.querySelector("[type='submit']").addEventListener("click", (e) => {
+            e.preventDefault();
+            sendMessage();
+        });
+
+        socket.onmessage = message => {
+            const json = JSON.parse(message.data);
+            const ulEl = document.querySelector("ul");
+            ulEl.insertAdjacentHTML("beforeend", `<li>${json.name}: ${json.message}</li>`)
+            console.log(JSON.parse(message.data));
+        };
+
+        const sendMessage = () => {
+            const name = document.querySelector("[name='name']").value;
+            const message = document.querySelector("[name='message']").value;
+            const text = JSON.stringify({
+                id,
+                name,
+                message
+            });
+            socket.send(text);
+            //const json = JSON.parse(`{"name": "${name}", "message":"${message}"}`);
+            //socket.send(json);
+            document.getElementsByTagName("form")[0].reset();
+        }
+    </script>
+</body>
+
+</html>
