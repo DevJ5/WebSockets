@@ -26,6 +26,7 @@
         });
 
         socket.onmessage = message => {
+            console.log(message);
             const json = JSON.parse(message.data);
             const ulEl = document.querySelector("ul");
             ulEl.insertAdjacentHTML("beforeend", `<li>${json.name}: ${json.message}</li>`)
