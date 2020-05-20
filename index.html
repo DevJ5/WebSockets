@@ -17,35 +17,44 @@
         <input type="submit" value="Send">
     </form>
     <script>
+        // Set up socket
         const socket = new WebSocket('ws://localhost:4000');
+        // Set up a simple Id
         const id = +new Date() + Math.random();
 
-        document.querySelector("[type='submit']").addEventListener("click", (e) => {
-            e.preventDefault();
-            sendMessage();
-        });
-
+        // Listen for send message from server
         socket.onmessage = message => {
-            console.log(message);
-            const json = JSON.parse(message.data);
-            const ulEl = document.querySelector("ul");
-            ulEl.insertAdjacentHTML("beforeend", `<li>${json.name}: ${json.message}</li>`)
-            console.log(JSON.parse(message.data));
+            try {
+                // Log the message event
+                console.log(message);
+                // Parse the data and append to a list
+                const json = JSON.parse(message.data);
+                const ulEl = document.querySelector("ul");
+                ulEl.insertAdjacentHTML("beforeend", `<li>${json.name}: ${json.message}</li>`)
+            } catch (e) {
+
+            }
         };
 
         const sendMessage = () => {
             const name = document.querySelector("[name='name']").value;
             const message = document.querySelector("[name='message']").value;
+            // Stringify the object
             const text = JSON.stringify({
                 id,
                 name,
                 message
             });
+            // Send the JSON string to the server
             socket.send(text);
-            //const json = JSON.parse(`{"name": "${name}", "message":"${message}"}`);
-            //socket.send(json);
             document.getElementsByTagName("form")[0].reset();
         }
+
+        // Event listener
+        document.querySelector("[type='submit']").addEventListener("click", (e) => {
+            e.preventDefault();
+            sendMessage();
+        });
     </script>
 </body>
 
